@@ -9,3 +9,21 @@ You've been asked to refactor the function `deterministicPartitionKey` in [`dpk.
 You will be graded on the exhaustiveness and quality of your unit tests, the depth of your refactor, and the level of insight into your thought process provided by the written explanation.
 
 ## Your Explanation Here
+
+Code Refactoring to dpk.js:
+Segregated methods to reusable components like:
+
+1. setEncryption for rncryption utility.
+2. getEvent: for separating event trigger concern from main method(dpk)
+3. refactored if statements to atomic statements, eliminating any errors due to conflict of conditions and easy testing paths.
+4. Additional comments added to make the code easily comprehendable.
+
+Testing to dpk.test.js:
+four test case created due to limitation of time, could have added some BVL cases :
+
+1. Returns the literal '0' when given no input
+2. Returns the candidate key in form of string when event triggered, like create
+3. if candidate key not type of string
+4. if candidate key has length greater than max length i.e. > 64.
+
+- could have added more test cases for different types of input data and event triggers.
