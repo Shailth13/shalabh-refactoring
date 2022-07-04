@@ -1,28 +1,43 @@
-const crypto = require("crypto");
+const crypto = require('crypto')
+
+// encryption method utility.
+setEncryption = (dat) => {
+  return crypto.createHash('sha3-512').update(dat).digest('hex')
+}
+
+getEvent = (event) => {
+  if (!event.partitionKey) {
+    const data = JSON.stringify(event)
+    candidate = setEncryption(data)
+  }
+  candidate = event.partitionKey
+  return candidate
+}
 
 exports.deterministicPartitionKey = (event) => {
-  const TRIVIAL_PARTITION_KEY = "0";
-  const MAX_PARTITION_KEY_LENGTH = 256;
-  let candidate;
+  const TRIVIAL_PARTITION_KEY = '0'
+  const MAX_PARTITION_KEY_LENGTH = 256
+  let candidate
+  let isEvent
 
+  // to check if event has been triggered and separate it out as a standalone method
   if (event) {
-    if (event.partitionKey) {
-      candidate = event.partitionKey;
-    } else {
-      const data = JSON.stringify(event);
-      candidate = crypto.createHash("sha3-512").update(data).digest("hex");
-    }
+    isEvent = getEvent(event)
   }
 
-  if (candidate) {
-    if (typeof candidate !== "string") {
-      candidate = JSON.stringify(candidate);
-    }
-  } else {
-    candidate = TRIVIAL_PARTITION_KEY;
+  // to breakdown one if-else statements with separate concerns into
+  // two separate if statements with single atomic conditions.
+  if (!candidate) {
+    candidate = TRIVIAL_PARTITION_KEY
   }
+
+  if (candidate && typeof candidate !== 'string') {
+    candidate = JSON.stringify(candidate)
+  }
+
   if (candidate.length > MAX_PARTITION_KEY_LENGTH) {
-    candidate = crypto.createHash("sha3-512").update(candidate).digest("hex");
+    candidate = setEncryption(candidate)
   }
-  return candidate;
-};
+
+  return candidate
+}
