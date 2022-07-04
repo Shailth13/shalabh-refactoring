@@ -1,11 +1,10 @@
 const crypto = require('crypto')
 
-// encryption method utility.
-setEncryption = (dat) => {
+const setEncryption = (dat) => {
   return crypto.createHash('sha3-512').update(dat).digest('hex')
 }
 
-getEvent = (event) => {
+const getEvent = (event) => {
   if (!event.partitionKey) {
     const data = JSON.stringify(event)
     candidate = setEncryption(data)
@@ -14,15 +13,14 @@ getEvent = (event) => {
   return candidate
 }
 
-exports.deterministicPartitionKey = (event) => {
+const deterministicPartitionKey = (event) => {
   const TRIVIAL_PARTITION_KEY = '0'
   const MAX_PARTITION_KEY_LENGTH = 256
   let candidate
-  let isEvent
 
   // to check if event has been triggered and separate it out as a standalone method
   if (event) {
-    isEvent = getEvent(event)
+    getEvent(event)
   }
 
   // to breakdown one if-else statements with separate concerns into
@@ -41,3 +39,5 @@ exports.deterministicPartitionKey = (event) => {
 
   return candidate
 }
+
+module.exports = { deterministicPartitionKey, getEvent, setEncryption }
