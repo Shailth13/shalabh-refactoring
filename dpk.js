@@ -1,5 +1,6 @@
 const crypto = require('crypto')
 
+// encryption util method.
 const setEncryption = (dat) => {
   return crypto.createHash('sha3-512').update(dat).digest('hex')
 }
